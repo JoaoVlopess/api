@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum CaseStatus {
+  ONGOING     
+  ARCHIVED    
+  WON         
+  LOST        
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String
+  password    String
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+
+  cases       Case[]    @relation("LawyerCases")
+}
+
+model Client {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String
+  password    String
+  document    String? 
+  phone       String?
+  createdAt  DateTime @default(now())
+  updateAt   DateTime @updatedAt
+
+  cases       Case[]
+}
+
+model Case {
+  id          Int      @id @default(autoincrement())
+  number      String   @unique
+  title       String
+  status      String
+  forum       String?
+  lastUpdateAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clientId    Int
+  client      Client @relation(fields: [clientId], references: [id])
+  lawyerId    Int
+  lawyer     User   @relation("LawyerCases", fields: [lawyerId], references:  [id])
+  hearings      Hearing[]
+
+
+  @@index([status])
+  @@index([clientId])
+  @@index([updatedAt])
+}
+
+
+model Hearing {
+  id        Int       @id @default(autoincrement())
+  date      DateTime
+  place     String?
+  notes     String?
+  createdAt DateTime  @default(now())
+
+  caseId    Int
+  case      Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+}
+
+
+//npx prisma studio visualizar a tabela
