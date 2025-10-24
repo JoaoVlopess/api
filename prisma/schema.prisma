@@ -39,27 +39,27 @@ model Client {
   password    String
   document    String? 
   phone       String?
-  createdAt  DateTime @default(now())
-  updateAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
 
   cases       Case[]
 }
 
 model Case {
-  id          Int      @id @default(autoincrement())
-  number      String   @unique
-  title       String
-  status      String
-  forum       String?
+  id            Int      @id @default(autoincrement())
+  number        String   @unique
+  title         String
+  status        String
+  forum         String?
   lastUpdateAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   clientId    Int
   client      Client @relation(fields: [clientId], references: [id])
   lawyerId    Int
-  lawyer     User   @relation("LawyerCases", fields: [lawyerId], references:  [id])
-  hearings      Hearing[]
+  lawyer      User   @relation("LawyerCases", fields: [lawyerId], references:  [id])
+  hearings    Hearing[]
 
 
   @@index([status])
